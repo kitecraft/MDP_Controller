@@ -15,7 +15,7 @@ bool StarsideSSD1306::InitDisplay()
 
     display.clearDisplay();
 
-    display.drawFastVLine(SCREEN_WIDTH/2, 0, SCREEN_HEIGHT, WHITE);
+    display.drawFastVLine(SCREEN_MID, 0, SCREEN_HEIGHT, WHITE);
     display.setCursor(LABEL_HORIZ_X, HEADER_LABELS_Y);
     display.print("Horiz");
 
@@ -31,51 +31,35 @@ bool StarsideSSD1306::InitDisplay()
 
 void StarsideSSD1306::UpdateHorizSteps(DISPLAY_STEP_OPTIONS displayOption)
 {
-    display.fillRect(3, 30, SCREEN_WIDTH/2 - 6, 34, BLACK);
-    display.setFont(&largeFont);
-
-    uint16_t x1, y1;
-    uint16_t w1, h1;
-    display.getTextBounds(DisplaySteps[displayOption].c_str(), 0, 0, &x1, &y1, &w1, &h1);
-
-    display.setCursor(32 - (w1/2), 42);
-
-    display.print(DisplaySteps[displayOption]);
-
-    String message = "";
-
-    switch(displayOption){
-    case DSO_SINGLEs:
-        message = "step";
-        break;
-    case DSO_TENs:
-    case DSO_25s:
-        message = "steps";
-        break;
-    case DSO_127m:
-    case DSO_17m:
-    case DSO_254m:
-        message = "mm";
-        break;
-    }
-
-    display.getTextBounds(message.c_str(), 0, 0, &x1, &y1, &w1, &h1);
-
-    display.setCursor(32 - (w1/2), 57);
-    display.print(message);
-    display.display();
+    bool inverted = (horizAxisMode == AM_MENU) ? true : false;
+    UpdateSteps(displayOption, 0, inverted);
 }
 
 void StarsideSSD1306::UpdateVertSteps(DISPLAY_STEP_OPTIONS displayOption)
 {
-    display.fillRect(SCREEN_WIDTH/2 + 3, 30, SCREEN_WIDTH/2 - 6, 34, BLACK);
+    bool inverted = (vertAxisMode == AM_MENU) ? true : false;
+    UpdateSteps(displayOption, SCREEN_MID, inverted);
+}
+
+void StarsideSSD1306::UpdateSteps(DISPLAY_STEP_OPTIONS displayOption, int xOffset, bool inverted)
+{
+    if(inverted)
+    {
+        display.fillRect(xOffset + 4, 20, SCREEN_WIDTH/2 - 8, 44, WHITE);
+        display.setTextColor(BLACK);
+    }
+    else {
+        display.fillRect(xOffset + 4, 20, SCREEN_WIDTH/2 - 8, 44, BLACK);
+        display.setTextColor(WHITE);
+    }
+
     display.setFont(&largeFont);
 
     uint16_t x1, y1;
     uint16_t w1, h1;
     display.getTextBounds(DisplaySteps[displayOption].c_str(), 0, 0, &x1, &y1, &w1, &h1);
 
-    display.setCursor(32 - (w1/2) + (SCREEN_WIDTH/2), 42);
+    display.setCursor(32 - (w1/2) + xOffset, 39);
     display.print(DisplaySteps[displayOption]);
 
 
@@ -97,9 +81,18 @@ void StarsideSSD1306::UpdateVertSteps(DISPLAY_STEP_OPTIONS displayOption)
     }
 
     display.getTextBounds(message.c_str(), 0, 0, &x1, &y1, &w1, &h1);
-    display.setCursor(32 - (w1/2) + (SCREEN_WIDTH/2), 57);
+    display.setCursor(32 - (w1/2) + xOffset, 54);
 
     display.print(message);
-
     display.display();
+}
+
+void StarsideSSD1306::ChangeHorizAxisMode(DISPLAY_MODES newMode)
+{
+     horizAxisMode = newMode;
+}
+
+void StarsideSSD1306::ChangeVertAxisMode(DISPLAY_MODES newMode)
+{
+    vertAxisMode = newMode;
 }
