@@ -3,6 +3,10 @@
         {
             "name": "MDP_Controller",
             "path": "."
+        },
+        {
+            "name": "VoltageTransmogrifier",
+            "path": "..\\..\\..\\VoltageTransmogrifier\\Firmware\\VoltageTransmogrifier"
         }
     ]
 }

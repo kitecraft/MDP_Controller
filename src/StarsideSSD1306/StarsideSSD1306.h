@@ -11,9 +11,10 @@
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 64
 #define SCREEN_MID (SCREEN_WIDTH/2)
+
+#define OLED_RESET  8
 #define OLED_DC     9
 #define OLED_CS     10
-#define OLED_RESET  8
 
 #define HEADER_LABELS_Y 13
 #define LABEL_HORIZ_X 10
@@ -24,9 +25,12 @@ enum DISPLAY_STEP_OPTIONS {
     DSO_SINGLEs = 0,
     DSO_TENs,
     DSO_25s,
+    DSO_058m,
     DSO_127m,
     DSO_17m,
-    DSO_254m
+    DSO_254m,
+    DSO_450m,
+    DSO_508m
 };
 
 enum DISPLAY_MODES {
@@ -37,7 +41,7 @@ enum DISPLAY_MODES {
 class StarsideSSD1306 {
 private:
     Adafruit_SSD1306 display;
-    String DisplaySteps[6] = {"1", "10", "25", "1.27", "1.70", "2.54"};
+    String DisplaySteps[9] = {"1", "10", "25", "0.58", "1.27", "1.70", "2.54", "4.50", "5.08"};
     GFXfont mediumFont = Bitter_VariableFont_wght8pt7b;
     GFXfont largeFont = Bitter_VariableFont_wght9pt7b;
     DISPLAY_MODES horizAxisMode = DISPLAY_MODES::AM_MOVE;

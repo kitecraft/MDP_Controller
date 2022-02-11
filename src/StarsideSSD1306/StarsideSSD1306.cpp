@@ -7,9 +7,13 @@ StarsideSSD1306::StarsideSSD1306()
 
 bool StarsideSSD1306::InitDisplay()
 {
-    if(!display.begin(SSD1306_SWITCHCAPVCC)) {
+
+    if(!display.begin()) {
         return false;
     }
+    //if(!display.begin(SSD1306_SWITCHCAPVCC)) {
+    //    return false;
+   // }
     display.setTextColor(WHITE);
 	display.setFont(&mediumFont);
 
@@ -76,6 +80,8 @@ void StarsideSSD1306::UpdateSteps(DISPLAY_STEP_OPTIONS displayOption, int xOffse
     case DSO_127m:
     case DSO_17m:
     case DSO_254m:
+    case DSO_450m:
+    case DSO_508m:
         message = "mm";
         break;
     }

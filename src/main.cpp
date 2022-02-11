@@ -2,6 +2,7 @@
 #include "AxisController/AxisController.h"
 #include "StarsideSSD1306/StarsideSSD1306.h"
 #include <Encoder.h>
+#include <Bounce2.h>
 
 void XAxisButtonInterrupt();
 void YAxisButtonInterrupt();
@@ -28,17 +29,17 @@ enum ENCODER_BTN {
 volatile bool encoderButtonPressed = false;
 volatile ENCODER_BTN encoderButtonActivated = ENCODER_BTN_NONE;
 
-long yAxisButton_LastPressed = 0;
 long xAxisButton_LastPressed = 0;
+long yAxisButton_LastPressed = 0;
 
-Encoder yAxisEncoder(6, 7);
+Encoder yAxisEncoder(23, 22);
 long yAxisEncoder_CurrentValue = 0;
 
-Encoder xAxisEncoder(3, 4);
+Encoder xAxisEncoder(6, 7);
 long xAxisEncoder_CurrentValue = 0;
 
-int xAxisButtonPin = 2;
-int yAxisButtonPin = 5;
+int yAxisButtonPin = 0;
+int xAxisButtonPin = 5;
 
 
 struct MDP_Options {
@@ -50,12 +51,15 @@ struct MDP_Options {
   };
 };
 
-MDP_Options allMDPOptions[6] = {MDP_Options(DSO_SINGLEs, SO_SINGLEs),
+MDP_Options allMDPOptions[9] = {MDP_Options(DSO_SINGLEs, SO_SINGLEs),
                                 MDP_Options(DSO_TENs, SO_TENs),
                                 MDP_Options(DSO_25s, SO_25s),
+                                MDP_Options(DSO_058m, SO_058m),
                                 MDP_Options(DSO_127m, SO_127m),
                                 MDP_Options(DSO_17m, SO_17m),
-                                MDP_Options(DSO_254m, SO_254m) };
+                                MDP_Options(DSO_254m, SO_254m),
+                                MDP_Options(DSO_450m, SO_450m),
+                                MDP_Options(DSO_508m, SO_508m) };
 
 int currentXAxisOption = 5;
 int currentYAxisOption = 5;
@@ -65,7 +69,6 @@ DISPLAY_MODES xAxisMode = AM_MOVE;
 DISPLAY_MODES yAxisMode = AM_MOVE;
 
 void setup() {
-  Serial.begin(115200);
   oledDisplay.InitDisplay();
 
   yAxisEncoder.write(0);
@@ -76,9 +79,9 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(yAxisButtonPin), YAxisButtonInterrupt, FALLING);
   attachInterrupt(digitalPinToInterrupt(xAxisButtonPin), XAxisButtonInterrupt, FALLING);
 
-  xAxis.Init(19, 18, 17, 16);
-  yAxis.Init(23, 22, 21, 20);
-  yAxis.ReversePolarity();
+  xAxis.Init(17, 16, 14, 15);
+  yAxis.Init(21, 20, 19, 18);
+
 
   xAxis.SetStepSize(allMDPOptions[currentXAxisOption].stepOption);
   yAxis.SetStepSize(allMDPOptions[currentYAxisOption].stepOption);
@@ -108,7 +111,7 @@ void HandleYAxisEncoder()
     if(direction)
     {
       currentYAxisOption++;
-      if(currentYAxisOption > 5)
+      if(currentYAxisOption > 7)
       {
         currentYAxisOption = 0;
       }
@@ -118,7 +121,7 @@ void HandleYAxisEncoder()
       currentYAxisOption--;
       if(currentYAxisOption < 0)
       {
-        currentYAxisOption = 5;
+        currentYAxisOption = 7;
       }
     }
 
@@ -137,7 +140,7 @@ void HandleXAxisEncoder()
     if(direction)
     {
       currentXAxisOption++;
-      if(currentXAxisOption > 5)
+      if(currentXAxisOption > 7)
       {
         currentXAxisOption = 0;
       }
@@ -147,7 +150,7 @@ void HandleXAxisEncoder()
       currentXAxisOption--;
       if(currentXAxisOption < 0)
       {
-        currentXAxisOption = 5;
+        currentXAxisOption = 7;
       }
     }
 

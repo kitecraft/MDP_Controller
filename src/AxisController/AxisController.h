@@ -17,7 +17,9 @@ enum STEP_OPTIONS {
     SO_25s = 25,
     SO_127m = 35,
     SO_17m = 47,
-    SO_254m = 70
+    SO_254m = 70,
+    SO_450m = 124,
+    SO_508m = 140
 };
 
 enum AXIS_DIRECTION {
